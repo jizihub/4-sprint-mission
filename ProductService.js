@@ -4,29 +4,65 @@ const instance = axios.create({
 });
 
 export class Product {
+    #id;
+    #name;
+    #description;
     #price;
+    #tags;
+    #images;
     #favoriteCount;
+    #createdAt;
+    #updatedAt;
 
     constructor(id, name, description, price, tags, images, favoriteCount = 0, createdAt, updatedAt) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        this.#id = id;
+        this.#name = name;
+        this.#description = description;
         this.#price = price;
-        this.tags = tags;
-        this.images = images;
+        this.#tags = tags;
+        this.#images = images;
         this.#favoriteCount = favoriteCount;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.#createdAt = createdAt;
+        this.#updatedAt = updatedAt;
     }
-    getPrice (){
+    getId(){
+        return this.#id;
+    }
+
+    getName(){
+        return this.#name;
+    }
+
+    getDescription(){
+        return this.#description
+    }
+
+    getPrice(){
         return this.#price;
+    }
+    
+    getTags(){
+        return this.#tags;
+    }
+
+    get tags(){
+        return this.#tags;
     }
 
     getFavoriteCount (){
         return this.#favoriteCount;
     }
-    favorite() {
+    
+    Favorite() {
         return this.#favoriteCount += 1;
+    }
+
+    getCreatedAt(){
+        return this.#createdAt;
+    }
+
+    getUpdatedAt(){
+        return this.#updatedAt;
     }
 }
 
