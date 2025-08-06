@@ -12,7 +12,7 @@ export const PatchProduct = s.partial(CreateProduct);
 
 export const CreateArticle = s.object({
  id: s.integer(),
- title: s.min(s.string(), o), 
+ title: s.min(s.string(), 0), 
  content: s.min(s.string, 200),
 });
 
@@ -20,13 +20,14 @@ export const PatchArticle = s.partial(CreateArticle);
 
 export const CreateComment = s.object({
  id: s.integer(),
- title: s.min(s.string(), o), 
+ title: s.min(s.string(), 0), 
  content: s.min(s.string, 200),
 });
 
-export const PatchComment = s.partial(CreateArticle);
+export const PatchComment = s.partial(CreateComment);
 
 /**
+ * content  string 
  *   id        Int     @id
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId Int?
