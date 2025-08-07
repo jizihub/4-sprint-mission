@@ -1,21 +1,21 @@
 import express from 'express';
 import { Prisma, PrismaClient} from '@prisma/client'; 
-import { CreateArticle, PatchArticle, } from '../struct.js';
 import { asyncHandler } from '../asyncHandler.js';
+import { createArticleValidator, 
+  patchArticleValidator } from '../middleware/validationMiddleWare.js';
 //assert
 
 const articleRouter = express.Router();
 const prisma = new PrismaClient();
 
 articleRouter.route('/')
-  .post( asyncHandler(async (req, res) => {
-    assert (req.body, CreateArticle);
+  .post(createArticleValidator, asyncHandler(async (req, res) => {
     const data = req.body;
     const newArticle = await prisma.article.create({ data }); 
     // { key : value }, key === value -> { key } 
     return res.status(201).json(newArticle);
   }))
-  .get( asyncHandler(async (req, res) => {
+  .get(asyncHandler(async (req, res) => {
     const { offset = 0, limit = 10, order = 'recent' } = req.query;
     const skip = parseInt(offset);
     const take = parseInt(limit);
@@ -69,8 +69,7 @@ articleRouter.route('/:id')
     }
   }))
 
-  .patch(asyncHandler(async (req, res) => {
-    assert(req.body, PatchArticle);
+  .patch(patchArticleValidator, asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id);
     const data = req.body;
     const updatedArticle = await prisma.article.update({

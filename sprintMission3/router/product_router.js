@@ -1,6 +1,8 @@
 import express from 'express';
 import { PrismaClient,Prisma } from '@prisma/client';
 import { CreateProduct, PatchProduct,} from '../struct.js';
+import { createProductValidator, 
+  patchProductValidator } from '../middleware/validationMiddleWare.js';
 import { asyncHandler  } from '../asyncHandler.js';
 
 const app = express();
@@ -11,10 +13,8 @@ app.use(express.json());
 const productRouter = express.Router();
 
 productRouter.route('/')
-  .post(asyncHandler(async (req,res)=>{
+  .post(createProductValidator, asyncHandler(async (req,res)=>{
     const data = req.body  
-    assert (
-      req.body, CreateProduct);
     const newProduct = await prisma.product.create({data}) 
     res.status(201).json(newProduct); 
     }))
@@ -69,8 +69,7 @@ productRouter.route('/:id')
     // }
   }))
 
-  .patch(asyncHandler(async(req, res)=>{
-    assert (req.body, CreateProduct);
+  .patch(patchProductValidator, asyncHandler(async(req, res)=>{
     const id = parseInt(req.params.id);
     const data = req.body; 
     const patchedProduct = await prisma.product.update({

@@ -6,6 +6,7 @@ import productRouter from './router/product_router.js';
 import articleCommnetRouter from './router/comment_article_router.js';
 import productCommentRouter from './router/comment_product_router.js';
 import { errorMiddleWare } from './middleware/errorMiddleWare.js';
+import uploadRouter from './router/upload_router.js'
 
 dotenv.config();
 
@@ -15,15 +16,16 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;  
 
 app.use(express.json());
-
 app.use ('/articles', articleRouter);
 app.use ('/products', productRouter);
 app.use('/products/comment',productCommnetRouter);
 app.use('/articles/comment',articleCommnetRouter);
-
+app.use('/files',express.static('uploads'));
+app.use(express.urlencoded({ extended: true }));
+app.use('/upload', uploadRouter); 
 app.use(errorMiddleWare);
 
-//app.use(에러핸들러....미들웨어...)
+
 
 // 서버 시작
 app.listen(PORT,() =>{

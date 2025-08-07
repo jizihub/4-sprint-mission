@@ -1,6 +1,7 @@
 import express from 'express';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { CreateComment, PatchComment,} from '../struct.js';
+import { createCommentValidator,
+  patchCommentValidator } from '../middleware/validationMiddleWare.js';
 import { asyncHandler } from '../app.js';
 
 const app = express();
@@ -9,18 +10,15 @@ const prisma = new PrismaClient();
 app.use(express.json());
 
 articleCommnetRouter('/')
-  .post(asyncHandler(async(req, res)=>{
-    assert(req.body, CreateComment);
+  .post(createCommentValidator, asyncHandler(async(req, res)=>{
     const content = req.body.content;
     const newArticleComment = await prisma.comment.create({content});
     return res.status(201).json(newArticleComment);
   }))
 
   
-
 articleCommnetRouter('/:id')
-  .patch(asyncHandler(async(req, res)=>{
-    assert (req.body, PatchComment);
+  .patch(patchCommentValidator, asyncHandler(async(req, res)=>{
     const id = parseInt(req.params.id);
     const patchedComment = await prisma.comment.update({
       where: { id },

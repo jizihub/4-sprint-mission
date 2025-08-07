@@ -1,15 +1,11 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv'; 
-import {
-  CreateArticle,
-  PatchArticle,
-} from '../sprintMission3/struct.js';
+import { CreateArticle,PatchArticle,} from '../sprintMission3/struct';
 
 dotenv.config();
 
 const app = express();
-
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;  
 
