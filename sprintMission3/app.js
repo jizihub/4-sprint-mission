@@ -1,45 +1,29 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv'; 
-import * as articleRouter from './article_router.js';
-import * as productRouter from './product_router.js'
+import articleRouter from './router/article_router.js';
+import productRouter from './router/product_router.js';
+import articleCommnetRouter from './router/comment_article_router.js';
+import productCommentRouter from './router/comment_product_router.js';
+import { errorMiddleWare } from './middleware/errorMiddleWare.js';
 
 dotenv.config();
 
 const app = express();
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(); 
 const PORT = process.env.PORT || 3000;  
 
 app.use(express.json());
-
-//에러핸들링 함수ㅡ에러처리 미들웨어 아님.. 생각해야 햄
-export function asyncHandler (handler){
-  return async function (req,res){
-    try{
-      await handler(req, res);
-    } catch(e){
-      if(
-        e.name === 'StructError' ||
-        e instanceof Prisma.PrismaClientValidationError
-      ){
-        res.status(400).json({ message: e.message});
-      } else if(
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === 'P2025'
-      ){
-        res.status(404).json({ message: e.message });
-      } else {
-        res.status(500).json({ message: e.message});
-      }
-    }
-  };
-}
 
 app.use ('/articles', articleRouter);
 app.use ('/products', productRouter);
 app.use('/products/comment',productCommnetRouter);
 app.use('/articles/comment',articleCommnetRouter);
+
+app.use(errorMiddleWare);
+
+//app.use(에러핸들러....미들웨어...)
 
 // 서버 시작
 app.listen(PORT,() =>{
@@ -50,3 +34,4 @@ app.listen(PORT,() =>{
 process.on('beforeExit', async () =>{
   await prisma.$disconnect();
 });
+

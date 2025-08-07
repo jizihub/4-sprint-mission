@@ -44,6 +44,5 @@ model Comment {
   updatedAt DateTime @updatedAt
 }
 
-//나중에 Tag는 enum으로 해서 만들고 싶음. --> 그러면 Struct도 고쳐야 함. 
-// 데이터 관계를 고려한 OnDelete 진행 못함. 해ㅔ야함 -->진행완
-// 시딩코드를 작성해?? --> 진행함 ㅇㅇ 
+//Tag는 enum? --> 그러면 Struct도 고쳐야 함. 
+

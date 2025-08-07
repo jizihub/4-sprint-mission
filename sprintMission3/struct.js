@@ -26,12 +26,3 @@ export const CreateComment = s.object({
 
 export const PatchComment = s.partial(CreateComment);
 
-/**
- * content  string 
- *   id        Int     @id
-  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int?
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId Int?
-  .... 관계 데이터...호고고곡?>>
- */

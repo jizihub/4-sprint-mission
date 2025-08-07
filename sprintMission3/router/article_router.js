@@ -1,7 +1,7 @@
 import express from 'express';
-import { Prisma, PrismaClient} from '@prisma/client'; // 어디서 데리고 올지 한 번 확인 필요 
-import { CreateArticle, PatchArticle, } from './struct.js';
-import { asyncHandler } from './app.js';
+import { Prisma, PrismaClient} from '@prisma/client'; 
+import { CreateArticle, PatchArticle, } from '../struct.js';
+import { asyncHandler } from '../asyncHandler.js';
 //assert
 
 const articleRouter = express.Router();
@@ -11,8 +11,9 @@ articleRouter.route('/')
   .post( asyncHandler(async (req, res) => {
     assert (req.body, CreateArticle);
     const data = req.body;
-    const newArticle = await prisma.article.create({ data });
-    res.status(201).json(newArticle);
+    const newArticle = await prisma.article.create({ data }); 
+    // { key : value }, key === value -> { key } 
+    return res.status(201).json(newArticle);
   }))
   .get( asyncHandler(async (req, res) => {
     const { offset = 0, limit = 10, order = 'recent' } = req.query;
@@ -44,7 +45,7 @@ articleRouter.route('/')
       skip,
       take,
     });
-    res.status(200).json(articleList);
+    return res.status(200).json(articleList);
     }
   }));
   

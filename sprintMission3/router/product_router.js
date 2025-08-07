@@ -1,7 +1,7 @@
 import express from 'express';
 import { PrismaClient,Prisma } from '@prisma/client';
-import { CreateProduct, PatchProduct,} from './struct.js';
-import { asyncHandler  } from './app.js';
+import { CreateProduct, PatchProduct,} from '../struct.js';
+import { asyncHandler  } from '../asyncHandler.js';
 
 const app = express();
 
@@ -13,7 +13,8 @@ const productRouter = express.Router();
 productRouter.route('/')
   .post(asyncHandler(async (req,res)=>{
     const data = req.body  
-    assert (req.body, CreateProduct);
+    assert (
+      req.body, CreateProduct);
     const newProduct = await prisma.product.create({data}) 
     res.status(201).json(newProduct); 
     }))
@@ -21,12 +22,11 @@ productRouter.route('/')
   .get(asyncHandler(async(req, res)=>{
     const id = parseInt(req.params.id);
     const { offset =0, limit=0, order, name, description } = req.query;
-
     const skip = parseInt(offset);
     const take = parseInt(limit);
 
     if(skip < 0 || take< 0){  
-    res.status(404).json({ error: '페이지네이션 설정값은 음수가 될 수 없습니다.'})
+    throw res.status(404).json({ error: '페이지네이션 설정값은 음수가 될 수 없습니다.'});
   }
     const productList = await prisma.product.findManyOrThrow({
       where: {
@@ -45,7 +45,7 @@ productRouter.route('/')
       createdAt: order === 'newest'? 'desc' : 'asc',
       }, 
       });
-    res. status(201).json(productList)
+    return res. status(201).json(productList);
     }));
 
 productRouter.route('/:id')
@@ -62,11 +62,11 @@ productRouter.route('/:id')
         createdAt: true,
       },
     });
-    if(detailedProduct){
-    res.status(201).json(detailedProduct);
-    } else {
-    res.status(404).json({ error: '조건에 맞는 상품을 조회할 수 없습니다. ' });   
-    }
+    // if(detailedProduct){
+    // res.status(201).json(detailedProduct);
+    // } else {
+    // return res.status(404).json({ error: '조건에 맞는 상품을 조회할 수 없습니다. ' });   
+    // }
   }))
 
   .patch(asyncHandler(async(req, res)=>{
@@ -77,7 +77,7 @@ productRouter.route('/:id')
       where : { id }, 
       data , 
     });
-    res.status(201).json(patchedProduct)
+    return res.status(201).json(patchedProduct);
   }))
 
   .delete(asyncHandler(async(req, res)=>{
@@ -85,7 +85,7 @@ productRouter.route('/:id')
     await prisma.product.delete({
       where: { id },
       });
-    res.status(204).send(); 
+    return res.status(204).send(); 
     }));
 
 export default productRouter;

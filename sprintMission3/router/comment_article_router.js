@@ -1,7 +1,7 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
-import { CreateComment, PatchComment,} from './struct.js';
-import { asyncHandler } from './app.js';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { CreateComment, PatchComment,} from '../struct.js';
+import { asyncHandler } from '../app.js';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -9,30 +9,32 @@ const prisma = new PrismaClient();
 app.use(express.json());
 
 articleCommnetRouter('/')
-  .post(asyncHandler(async(req, res)=> 
-    assert(req.body, CreateComment)))
+  .post(asyncHandler(async(req, res)=>{
+    assert(req.body, CreateComment);
     const content = req.body.content;
-    const newArticleComment = await prisma.comment.create({content});//
-    res.status(201).json(newArticleComment)
+    const newArticleComment = await prisma.comment.create({content});
+    return res.status(201).json(newArticleComment);
+  }))
 
+  
 
 articleCommnetRouter('/:id')
   .patch(asyncHandler(async(req, res)=>{
-    aseert (req.body, PatchComment);
+    assert (req.body, PatchComment);
     const id = parseInt(req.params.id);
     const patchedComment = await prisma.comment.update({
       where: { id },
       data: req.body,
-    })
-    res.status(201).json(patchedComment)
+    });
+    return res.status(201).json(patchedComment);
     }))
 
   .delete(asyncHandler(async(req,res)=>{
-    const id = parseInt(req.params.id)
+    const id = parseInt(req.params.id);
     await prisma.comment.delete({
       where: { id },
     })
-    res.staus(204).send()
+    return res.staus(204).send();
      }))
   
   .get(asyncHandler(async(req, res)=>{
@@ -52,7 +54,8 @@ articleCommnetRouter('/:id')
       cursor : {
         id: myCusor,
       }
-    })
+    });
+    return res.status(204).json(articleCommentList);
   }));
 
 export default articleCommnetRouter;
