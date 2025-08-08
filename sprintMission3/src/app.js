@@ -5,8 +5,8 @@ import articleRouter from './router/article_router.js';
 import productRouter from './router/product_router.js';
 import articleCommnetRouter from './router/comment_article_router.js';
 import productCommentRouter from './router/comment_product_router.js';
-import { errorMiddleWare } from './middleware/errorMiddleWare.js';
-import uploadRouter from './router/upload_router.js
+import { errorMiddleWare } from '../sprintMission3/middleware/errorMiddleWare.js';
+import uploadRouter from './sprintMission3/router/upload_router.js';
 import cors from 'cors';
 
 
