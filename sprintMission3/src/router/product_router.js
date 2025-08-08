@@ -4,11 +4,7 @@ import { createProductValidator,
   patchProductValidator } from '../middleware/validationMiddleWare.js';
 import { asyncHandler } from '../asyncHandler.js';
 
-const app = express();
-
 const prisma = new PrismaClient();
-app.use(express.json());
-
 const productRouter = express.Router();
 
 productRouter.route('/')
