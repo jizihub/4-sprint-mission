@@ -1,6 +1,9 @@
+import { Prisma } from "@prisma/client";
+import { StructError } from "superstruct";
+
 export function errorMiddleWare (err, req, res,next){
   if(
-    err.name === 'StructError' ||
+    err instanceof StructError ||
     err instanceof Prisma.PrismaClientValidationError
   ){
     return res.status(400).json({ message: '요청하신 정보는 유효하지 않습니다.'});
