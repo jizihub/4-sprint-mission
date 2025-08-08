@@ -1,4 +1,5 @@
-import { CreateArticle, CreateComment, CreateProduct, PatchArticle, PatchComment, PatchProduct } from "../struct"
+import { assert, StructError } from 'superstruct'
+import { CreateArticle, CreateComment, CreateProduct, PatchArticle, PatchComment, PatchProduct } from "../struct.js"
 
 // 유효성 미들웨어 만들기
 // 1. 각 필드에 대한 유효성 검사는 superstruct가 해준다.
