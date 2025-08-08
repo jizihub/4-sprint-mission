@@ -2,7 +2,6 @@
  * multer 미들웨어를 사용하여 이미지 업로드 API를 구현해주세요.
 업로드된 이미지는 서버에 저장하고, 해당 이미지의 경로를 response 객체에 포함해 반환합니다.
  */
-import express from 'express';
 import multer from "multer";
 import path from 'path';
 
@@ -10,7 +9,7 @@ const storage = multer.diskStorage({
   destination: function(req, file, cb){
     cb(null, 'uploads/');
   },
-  filename: function (req, file, cb){
+  filename: function (req, f7ㅛile, cb){
     const ext = path.extname(file.originalname);
     cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
   }

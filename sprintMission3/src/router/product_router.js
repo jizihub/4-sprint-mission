@@ -1,9 +1,8 @@
 import express from 'express';
 import { PrismaClient,Prisma } from '@prisma/client';
-import { CreateProduct, PatchProduct,} from '../struct.js';
 import { createProductValidator, 
   patchProductValidator } from '../middleware/validationMiddleWare.js';
-import { asyncHandler  } from '../asyncHandler.js';
+import { asyncHandler } from '../asyncHandler.js';
 
 const app = express();
 

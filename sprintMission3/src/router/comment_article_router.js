@@ -1,8 +1,8 @@
 import express from 'express';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { createCommentValidator,
   patchCommentValidator } from '../middleware/validationMiddleWare.js';
-import { asyncHandler } from '../app.js';
+import { asyncHandler } from '../asyncHandler.js';
 
 const app = express();
 const prisma = new PrismaClient();

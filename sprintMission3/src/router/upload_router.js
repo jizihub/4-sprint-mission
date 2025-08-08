@@ -1,5 +1,4 @@
 import express from 'express';
-import { asyncHandler } from '../app.js';
 import upload from '../upload';
 import multer from 'multer';
 
@@ -12,11 +11,11 @@ uploadRouter.route('/')
   .post(upload.array('attachment', 5), asyncHandler(async (req, res) => {
     try{
       if (!req.files || req.files.length === 0) {
-        console.error("message: '파일이 업로드되지 않았습니다.'")
-        return res.status(400).json({ meessage: '파일이 업로드되지 않았습니다.' });
+        console.error("Error: '파일들이 업로드되지 않았습니다.'")
+        return res.status(400).json({ message: '파일들이 업로드되지 않았습니다.' });
       }
         console.log('업로드된 파일들: ', req.files);
-        console.log('텍스트 필드 데이터; ', req.body);
+        console.log('텍스트 필드 데이터: ', req.body);
         return res.status(200).json({
           message: '파일들이 성공적으로 업로드되었습니다.',
           file: req.files.map(file => ({

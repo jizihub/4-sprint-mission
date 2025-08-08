@@ -1,5 +1,5 @@
 import express from 'express';
-import { Prisma, PrismaClient} from '@prisma/client'; 
+import { PrismaClient } from '@prisma/client'; 
 import { asyncHandler } from '../asyncHandler.js';
 import { createArticleValidator, 
   patchArticleValidator } from '../middleware/validationMiddleWare.js';
