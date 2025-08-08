@@ -6,7 +6,9 @@ import productRouter from './router/product_router.js';
 import articleCommnetRouter from './router/comment_article_router.js';
 import productCommentRouter from './router/comment_product_router.js';
 import { errorMiddleWare } from './middleware/errorMiddleWare.js';
-import uploadRouter from './router/upload_router.js'
+import uploadRouter from './router/upload_router.js
+import cors from 'cors';
+
 
 dotenv.config();
 
@@ -15,6 +17,7 @@ const app = express();
 const prisma = new PrismaClient(); 
 const PORT = process.env.PORT || 3000;  
 
+app.use(cors());
 app.use(express.json());
 app.use ('/articles', articleRouter);
 app.use ('/products', productRouter);
