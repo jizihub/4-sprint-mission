@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { StructError } from "superstruct";
 
-export function errorMiddleWare (err, req, res,next){
+export function errorMiddleWare (err, req, res, next){
   if(
     err instanceof StructError ||
     err instanceof Prisma.PrismaClientValidationError
@@ -16,5 +16,5 @@ export function errorMiddleWare (err, req, res,next){
     return res.status(500).json({ message: '서버 오류로 요청하신 정보를 처리할 수 없습니다.'});
   }
 }
-// 왜 throw 대신 Return?
+
 

@@ -7,7 +7,7 @@ import articleCommentRouter from './router/comment_article_router.js';
 import productCommentRouter from './router/comment_product_router.js';
 import { errorMiddleWare } from './middleware/errorMiddleWare.js';
 import cors from 'cors';
-import upload from './middleware/multer.js';
+import upload from './middleware/Multer.js';
 import { asyncHandler } from './asyncHandler.js';
 
 dotenv.config();
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads',express.static('uploads'));
 
 app.use ('/articles', articleRouter);
-app.use ('/products', productRouter);
+app.use('/products', productRouter);
 app.use('/products/comment',productCommentRouter);
 app.use('/articles/comment',articleCommentRouter);
 

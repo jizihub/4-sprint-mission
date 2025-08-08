@@ -3,6 +3,7 @@ import { PrismaClient,Prisma } from '@prisma/client';
 import { createProductValidator, 
   patchProductValidator } from '../middleware/validationMiddleWare.js';
 import { asyncHandler } from '../asyncHandler.js';
+import { integer } from 'superstruct';
 
 const prisma = new PrismaClient();
 const productRouter = express.Router();
@@ -11,18 +12,17 @@ productRouter.route('/')
   .post(createProductValidator, asyncHandler(async (req,res)=>{
     const data = req.body  
     const newProduct = await prisma.product.create({data}) 
-    res.status(201).json(newProduct); 
+    return res.status(201).json(newProduct); 
     }))
 
   .get(asyncHandler(async(req, res)=>{
-    const id = parseInt(req.params.id);
     const { offset =0, limit=0, order, name, description } = req.query;
     const skip = parseInt(offset);
     const take = parseInt(limit);
 
-    if(skip < 0 || take< 0){  
-    throw res.status(404).json({ error: '페이지네이션 설정값은 음수가 될 수 없습니다.'});
-  }
+    if( skip!== integer || take!== integer || skip < 0 || take < 0 ){  
+      return res.status(404).json({ error: '페이지네이션 설정값은 양수로 설정되어야 합니다..'});
+  } // 정수여야 하는건강...? 
     const productList = await prisma.product.findManyOrThrow({
       where: {
         name,
@@ -45,10 +45,10 @@ productRouter.route('/')
 
 productRouter.route('/:id')
   .get(asyncHandler(async (req,res)=>{
-  const id = parseInt(req.params.id);
-  const datailedProduct = await prisma.product.findUniqueOrThrow({
-    where : { id},
-    select : { 
+    const id = parseInt(req.params.id);
+    const datailedProduct = await prisma.product.findUniqueOrThrow({
+      where : { id },
+      select : { 
         id: true,
         name: true,
         description: true,
@@ -57,11 +57,6 @@ productRouter.route('/:id')
         createdAt: true,
       },
     });
-    // if(detailedProduct){
-    // res.status(201).json(detailedProduct);
-    // } else {
-    // return res.status(404).json({ error: '조건에 맞는 상품을 조회할 수 없습니다. ' });   
-    // }
   }))
 
   .patch(patchProductValidator, asyncHandler(async(req, res)=>{
