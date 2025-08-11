@@ -9,26 +9,34 @@ const productCommentRouter = express.Router();
 
 productCommentRouter.route('/')
   .post(createCommentValidator, asyncHandler(async(req,res)=>{
-    const {content, articleId, userId } = req.body;
+    const { content, articleId, userId } = req.body;
     const newProductComment = await prisma.comment.create({
       data: {
-        content: content,
-        articleId: parsedInt(articleId),
-        userId: parsedInt(userId)
+        content,
+        articleId: parseInt(articleId),
+        userId: parseInt(userId)
       }
     });
+    console.log('새로운 상품 댓글을 생성했습니다.', newProductComment)
     return res.status(201).json(newProductComment);
   }))
 
 
 productCommentRouter.route('/:id') 
   .patch(patchCommentValidator, asyncHandler(async(req, res)=>{
-    const id = parseInt(req.params.id);
-    const patchedComment = await prisma.comment.update({
+    const id = parseInt(req.params.id); 
+    const { content, productId } = req.body;
+    const updateToData = {};
+    if(content !== undefined){
+      updateToData.content = content;
+    }
+
+    const updatedComment = await prisma.comment.update({
       where: { id },
-      data: req.body,
+      data: updateToData,
     });
-    return res.status(201).json(patchedComment);
+    console.log('요청하신 댓글이 수정되었습니다.', updatedComment)
+    return res.status(201).json(updatedComment);
   }))
 
   .delete(asyncHandler(async(req,res)=>{
@@ -36,6 +44,7 @@ productCommentRouter.route('/:id')
     await prisma.comment.delete({
       where: { id },
     })
+    console.log('요청하신 상품 댓글을 삭제했습니다.')
     return res.staus(204).send()
   }))
 
@@ -57,7 +66,8 @@ productCommentRouter.route('/:id')
          id: myCusor,
        }
      })
-     return res.status(201).json({articleCommnetList});
+     console.log('요청하신 상품 목록을 조회했습니다.', artcleCommentList)
+     return res.status(201).json({artcleCommentList});
    }));
 
 export default productCommentRouter;

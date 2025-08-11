@@ -1,5 +1,5 @@
 import express from 'express';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv'; 
 import articleRouter from './router/article_router.js';
 import productRouter from './router/product_router.js';
@@ -7,12 +7,12 @@ import articleCommentRouter from './router/comment_article_router.js';
 import productCommentRouter from './router/comment_product_router.js';
 import { errorMiddleWare } from './middleware/errorMiddleWare.js';
 import cors from 'cors';
-import upload from './middleware/Multer.js';
+import upload from './middleware/multer.js';
 import { asyncHandler } from './asyncHandler.js';
 
 dotenv.config();
 
-const app = express();
+const app = express()
 const prisma = new PrismaClient(); 
 const PORT = process.env.PORT || 3000;  
 

@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { asyncHandler } from '../asyncHandler.js';
 import { createArticleValidator, 
   patchArticleValidator } from '../middleware/validationMiddleWare.js';
-//assert
 
 const articleRouter = express.Router();
 const prisma = new PrismaClient();
@@ -11,17 +10,19 @@ const prisma = new PrismaClient();
 articleRouter.route('/')
   .post(createArticleValidator, asyncHandler(async (req, res) => {
     const data = req.body;
-    const newArticle = await prisma.article.create({ data }); 
-    // { key : value }, key === value -> { key } 
+    const newArticle = await prisma.article.create({ data });
+    console.log('새로운 게시글이 생성되었습니다.', newArticle) 
     return res.status(201).json(newArticle);
   }))
+
   .get(asyncHandler(async (req, res) => {
     const { offset = 0, limit = 10, order = 'recent' } = req.query;
     const skip = parseInt(offset);
     const take = parseInt(limit);
 
-    if(skip < 0 || take < 0){
-      return res.status(400).json({ error: '페이지네이션 설정값은 음수가 될 수 없습니다.'})
+    if( skip!== integer || take!== integer || skip < 0 || take < 0 ){  
+          return res.status(404).json({ error: '페이지네이션 설정값은 양수로 설정되어야 합니다..'});
+      }
 
     let orderBy;
     switch (order) {
@@ -46,7 +47,6 @@ articleRouter.route('/')
       take,
     });
     return res.status(200).json(articleList);
-    }
   }));
   
 
@@ -61,22 +61,26 @@ articleRouter.route('/:id')
         content: true,
         createdAt: true,
      },
-    });
-    if(detailedArticle){
-    res.status(200).json(detailedArticle);
-    } else {
-    res.status(404).json({ error: '조건에 맞는 게시물을 찾을 수 없습니다.'}); 
-    }
+    }); 
+    return res.status(200).json(detailedArticle);
   }))
 
   .patch(patchArticleValidator, asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id);
-    const data = req.body;
+    const { title, content } = req.body
+    const updateToData = {};
+    if(!title == undefined){
+      updateToData.title = title;
+    }
+    if(!content == undefined){
+      updateToData.content = content;
+    }
     const updatedArticle = await prisma.article.update({
       where: { id } ,
-      data,
-      });
-      res.status(200).json(updatedArticle);
+      data:  updateToData // 어차피 updateToData는 객체형태라서 {} 따로 안함.
+    });
+    console.log('게시글이 수정되었습니다.', newArticle) 
+    return res.status(200).json(updatedArticle);
   }))
 
   .delete(asyncHandler(async(req, res)=>{
@@ -90,7 +94,7 @@ articleRouter.route('/:id')
 export default articleRouter;
 
 
-/**
+/**c
  * const results = await prisma.post.findMany({
   skip: (page - 1) * 5,
   take: 5,
