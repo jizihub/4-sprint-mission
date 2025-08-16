@@ -31,18 +31,18 @@ app.use('/articles/comment',articleCommentRouter);
 
 app.post('/upload/single', upload.single('attachment'), asyncHandler(async (req, res) => {
   try{
-    if (!req.files) {
+    if (!req.file) {
       console.error("Error: '파일이 업로드되지 않았습니다.'")
       return res.status(400).json({ message: '파일이 업로드 되지 않았습니다.'})}
     console.log('업로드된 파일: ', req.file);
     console.log('텍스트 필드 데이터: ', req.body);
     return res.status(200).json({
        message: '파일이 성공적으로 업로드되었습니다.',
-       filename: file.filename,
-       filepath: `upload/${file.filename}` 
+       filename: req.file.filename,
+       filepath: `upload/${req.file.filename}` 
       });
   } catch(error){
-    if(error instanceof multer.MulterError && error.code === 'LIMIT_FIELD_SIZE'){      
+    if(error instanceof multer.MulterError === 'LIMIT_FIELD_SIZE'){      
       return res.status(400).json({ error: '파일 크기가 너무 큽니다.'})
       }
       console.error('파일 업로드 중 오류발생:', error);
