@@ -44,5 +44,4 @@ model Comment {
   updatedAt DateTime @updatedAt
 }
 
-//Tag는 enum? --> 그러면 Struct도 고쳐야 함. 
 
