@@ -17,17 +17,19 @@ productRouter.route('/')
     }))
 
   .get(asyncHandler(async(req, res)=>{
-    const { offset =0, limit=0, order, name, description } = req.query;
+    const { offset =0, limit=0, order, name = '', description = '' } = req.query;
     const skip = parseInt(offset);
     const take = parseInt(limit);
 
-    if(skip < 0 || take < 0 ){  
+    if(isNaN(skip) || isNaN(take) || skip < 0 || take < 0){  
       return res.status(404).json({ error: '페이지네이션 설정값은 양수로 설정되어야 합니다..'});
   } 
     const productList = await prisma.product.findManyOrThrow({
       where: {
-        name,
-        description,
+        OR: [
+          {name: {contains: name}},
+          {description: {contains: description}},
+        ]
       },
       skip, 
       take, 

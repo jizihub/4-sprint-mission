@@ -2,7 +2,7 @@ import *as s from 'superstruct'
 
 export const CreateProduct = s.object({
  id: s.integer(),
- name: s.size(s.string(), 1, 30),
+ name: s.size(s.string(), 1, 10),
  description : s.min(s.string(), 0),
  price: s.min(s.number(),0),
 });

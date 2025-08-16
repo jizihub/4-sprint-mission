@@ -1,14 +1,17 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv'; 
+import cors from 'cors';
+import { asyncHandler } from './asyncHandler.js';
+
 import articleRouter from './router/article_router.js';
 import productRouter from './router/product_router.js';
 import articleCommentRouter from './router/comment_article_router.js';
 import productCommentRouter from './router/comment_product_router.js';
+
 import { errorMiddleWare } from './middleware/errorMiddleWare.js';
-import cors from 'cors';
 import upload from './middleware/multer.js';
-import { asyncHandler } from './asyncHandler.js';
+
 
 dotenv.config();
 
@@ -26,29 +29,27 @@ app.use('/products', productRouter);
 app.use('/products/comment',productCommentRouter);
 app.use('/articles/comment',articleCommentRouter);
 
-app.post('/upload/array', upload.array('attachment', 5), asyncHandler(async (req, res) => {
-    try{
-      if (!req.files || req.files.length === 0) {
-        console.error("Error: '파일들이 업로드되지 않았습니다.'")
-        return res.status(400).json({ message: '파일들이 업로드되지 않았습니다.' });
+app.post('/upload/single', upload.single('attachment'), asyncHandler(async (req, res) => {
+  try{
+    if (!req.files) {
+      console.error("Error: '파일이 업로드되지 않았습니다.'")
+      return res.status(400).json({ message: '파일이 업로드 되지 않았습니다.'})}
+    console.log('업로드된 파일: ', req.file);
+    console.log('텍스트 필드 데이터: ', req.body);
+    return res.status(200).json({
+       message: '파일이 성공적으로 업로드되었습니다.',
+       filename: file.filename,
+       filepath: `upload/${file.filename}` 
+      });
+  } catch(error){
+    if(error instanceof multer.MulterError && error.code === 'LIMIT_FIELD_SIZE'){      
+      return res.status(400).json({ error: '파일 크기가 너무 큽니다.'})
       }
-        console.log('업로드된 파일들: ', req.files);
-        console.log('텍스트 필드 데이터: ', req.body);
-        return res.status(200).json({
-          message: '파일들이 성공적으로 업로드되었습니다.',
-          files: req.files.map(file => ({
-            filename: file.filename,
-            filepath: `uploads/${file.filename}` 
-          }))
-        });
-      } catch(error){
-        if(error instanceof multer.MulterError && error.code === 'LIMIT_FIELD_COUNT'){
-          return res.status(400).json({ error: '최대 5개의 파일만 업로드할 수 있습니다.'})
-        }
-        console.error('파일 업로드 중 오류발생:', error);
-        res.status(500).json({ error: '파일 업로드 중 오류 발생' })
-      }
-    }));
+      console.error('파일 업로드 중 오류발생:', error);
+      res.status(500).json({ error: '파일 업로드 중 오류 발생' })
+    }
+  }));
+
 
 app.use(errorMiddleWare);
 

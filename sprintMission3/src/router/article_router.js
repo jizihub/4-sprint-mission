@@ -10,20 +10,26 @@ const prisma = new PrismaClient();
 articleRouter.route('/')
   .post(createArticleValidator, asyncHandler(async (req, res) => {
     const data = req.body;
-    const newArticle = await prisma.article.create({ data });
+    const newArticle = await prisma.article.create({
+      data,
+      select: {
+        title: true,
+        content: true,
+      },
+    });
     console.log('새로운 게시글이 생성되었습니다.', newArticle) 
     return res.status(201).json(newArticle);
   }))
 
   .get(asyncHandler(async (req, res) => {
-    const { offset = 0, limit = 10, order = 'recent' } = req.query;
+    const { offset = 0, limit = 10, order = 'recent', title = '', content = '' } = req.query;
     const skip = parseInt(offset);
     const take = parseInt(limit);
 
-    if( skip!== integer || take!== integer || skip < 0 || take < 0 ){  
-          return res.status(404).json({ error: '페이지네이션 설정값은 양수로 설정되어야 합니다..'});
+    if( isNaN(skip) || isNaN(take) || skip < 0 || take < 0 ){ 
+          console.log('페이지네이션 설정값은 양수로 설정해야합니다.') 
+          return res.status(400).json({ error: '페이지네이션 설정값은 양수로 설정해야합니다.'});
       }
-
     let orderBy;
     switch (order) {
       case 'recent':
@@ -36,6 +42,12 @@ articleRouter.route('/')
         orderBy = { createdAt: 'desc' };
     }
     const articleList = await prisma.article.findManyOrThrow({
+      where: { 
+        OR :[
+        {title: {contains: title}},
+        {content: {contains: content}},
+        ],
+      }, 
       select: {
         id: true,
         title: true,
@@ -46,8 +58,10 @@ articleRouter.route('/')
       skip,
       take,
     });
+    console.log('게시글 목록을 조회합니다.', articleList)
     return res.status(200).json(articleList);
   }));
+
   
 
 articleRouter.route('/:id')
@@ -62,6 +76,7 @@ articleRouter.route('/:id')
         createdAt: true,
      },
     }); 
+    console.log('게시글을 상세 조회합니다.', detailedArticle)
     return res.status(200).json(detailedArticle);
   }))
 
@@ -77,7 +92,7 @@ articleRouter.route('/:id')
     }
     const updatedArticle = await prisma.article.update({
       where: { id } ,
-      data:  updateToData // 어차피 updateToData는 객체형태라서 {} 따로 안함.
+      data:  updateToData 
     });
     console.log('게시글이 수정되었습니다.', newArticle) 
     return res.status(200).json(updatedArticle);
@@ -89,19 +104,6 @@ articleRouter.route('/:id')
       where: { id },
     });
     res.status(204).send(); 
-  }))
+  }));
 
 export default articleRouter;
-
-
-/**c
- * const results = await prisma.post.findMany({
-  skip: (page - 1) * 5,
-  take: 5,
-});
-이렇다면 page 1 일때는 skip하지 않고,
-2일 때는 5개 skip
-3일 때는 10개 skip ... 하면서 목표했던 페이지 분할 로딩 기능이 구현된다.
- */
-
-//https://www.prisma.io/docs/orm/prisma-client/queries/pagination
